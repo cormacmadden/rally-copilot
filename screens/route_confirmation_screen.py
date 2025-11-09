@@ -1,15 +1,10 @@
 """
-Route Confirmation Screen - Shows map preview and route details
+Route Confirmation Screen - Shows route details
 """
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.label import MDLabel
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.image import Image
-from kivy.core.image import Image as CoreImage
-from io import BytesIO
-import staticmap
-import tempfile
 
 
 class RouteConfirmationScreen(MDScreen):
@@ -37,7 +32,7 @@ class RouteConfirmationScreen(MDScreen):
         
         # Header
         header = MDLabel(
-            text="ROUTE PREVIEW",
+            text="ROUTE CONFIRMATION",
             halign="center",
             size_hint=(1, None),
             height=50,
@@ -47,19 +42,14 @@ class RouteConfirmationScreen(MDScreen):
             bold=True
         )
         
-        # Route info
+        # Route details
         self.info_label = MDLabel(
             text="Loading route...",
             halign="center",
-            size_hint=(1, None),
-            height=60,
-            font_size="14sp"
-        )
-        
-        # Map preview
-        self.map_image = Image(
-            size_hint=(1, 0.6),
-            allow_stretch=True
+            valign="top",
+            size_hint=(1, 1),
+            font_size="16sp",
+            markup=True
         )
         
         # Buttons
@@ -93,7 +83,6 @@ class RouteConfirmationScreen(MDScreen):
         
         layout.add_widget(header)
         layout.add_widget(self.info_label)
-        layout.add_widget(self.map_image)
         layout.add_widget(button_layout)
         
         self.add_widget(layout)
@@ -116,54 +105,13 @@ class RouteConfirmationScreen(MDScreen):
         
         # Update info label if UI is built
         if hasattr(self, 'info_label'):
-            self.info_label.text = f"{distance} - {duration}\nFrom: {start_addr}\nTo: {end_addr}"
-        
-        # Render map if UI is built
-        if hasattr(self, 'map_image'):
-            self.render_route_map(route_data)
-        
-    def render_route_map(self, route_data):
-        """Render static map with route polyline"""
-        try:
-            # Create static map
-            m = staticmap.StaticMap(600, 400, url_template='http://a.tile.osm.org/{z}/{x}/{y}.png')
-            
-            # Extract polyline points
-            points = []
-            for leg in route_data['legs']:
-                for step in leg['steps']:
-                    start_loc = step['start_location']
-                    end_loc = step['end_location']
-                    points.append((start_loc['lng'], start_loc['lat']))
-                    points.append((end_loc['lng'], end_loc['lat']))
-            
-            # Add line to map
-            if points:
-                line = staticmap.Line(points, 'red', 4)
-                m.add_line(line)
-                
-                # Add start marker
-                start_point = points[0]
-                m.add_marker(staticmap.CircleMarker(start_point, 'green', 12))
-                
-                # Add end marker
-                end_point = points[-1]
-                m.add_marker(staticmap.CircleMarker(end_point, 'red', 12))
-            
-            # Render to image
-            image_data = m.render()
-            
-            # Convert to Kivy image
-            data = BytesIO()
-            image_data.save(data, format='png')
-            data.seek(0)
-            
-            core_image = CoreImage(BytesIO(data.read()), ext='png')
-            self.map_image.texture = core_image.texture
-            
-        except Exception as e:
-            print(f"Error rendering map: {e}")
-            self.info_label.text += f"\n(Map preview unavailable)"
+            self.info_label.text = (
+                f"[b][size=20sp][color=ff0000]RALLY MODE READY[/color][/size][/b]\n\n"
+                f"[b]Distance:[/b] {distance}\n"
+                f"[b]Duration:[/b] {duration}\n\n"
+                f"[b]From:[/b]\n{start_addr}\n\n"
+                f"[b]To:[/b]\n{end_addr}"
+            )
             
     def cancel_route(self, instance):
         """Cancel and go back to home"""
