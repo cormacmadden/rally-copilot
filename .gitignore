@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+*.env
+
+# Google Cloud credentials
+google-service-account.json
+*service-account*.json
+config/*.json
+
+# Kivy
+*.pyc
+.buildozer/
+bin/
+.gradle/
+
+# Mobile build artifacts
+*.apk
+*.aab
+*.ipa
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
