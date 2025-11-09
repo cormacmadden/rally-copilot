@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v4
@@ -45,7 +45,9 @@ jobs:
           libtool \
           pkg-config \
           libffi-dev \
-          libssl-dev
+          libssl-dev \
+          m4 \
+          gettext
 
     - name: Install buildozer
       run: |
