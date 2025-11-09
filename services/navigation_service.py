@@ -1,7 +1,9 @@
 """
 Navigation Service - Handles Google Maps routing and real-time navigation
 """
-import requests
+import urllib.request
+import urllib.parse
+import json
 from typing import Callable, Dict, List, Optional
 import threading
 import time
@@ -48,7 +50,6 @@ class NavigationService:
                 origin = "Beauchamp Ave, Leamington Spa, UK"
                 print(f"Desktop mode: Using test origin: {origin}")
         
-        url = "https://maps.googleapis.com/maps/api/directions/json"
         params = {
             "origin": origin,
             "destination": destination,
@@ -56,9 +57,11 @@ class NavigationService:
             "mode": "driving"
         }
         
+        url = "https://maps.googleapis.com/maps/api/directions/json?" + urllib.parse.urlencode(params)
+        
         try:
-            response = requests.get(url, params=params)
-            data = response.json()
+            with urllib.request.urlopen(url) as response:
+                data = json.loads(response.read().decode())
             
             if data['status'] == 'OK':
                 route = data['routes'][0]
