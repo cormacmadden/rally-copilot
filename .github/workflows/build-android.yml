@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.10'
 
     - name: Install system dependencies
       run: |
@@ -51,11 +51,20 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install buildozer==1.5.0 cython==0.29.33
+        
+    - name: Accept Android licenses
+      run: |
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
     - name: Build with buildozer
       run: |
         export BUILDOZER_WARN_ON_ROOT=0
-        yes | buildozer android debug
+        export USE_SDK_WRAPPER=1
+        export ANDROIDSDK=$ANDROID_HOME
+        export ANDROIDNDK=$ANDROID_NDK_HOME
+        export ANDROIDAPI=31
+        export ANDROIDNDKVER=r25c
+        yes | buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
